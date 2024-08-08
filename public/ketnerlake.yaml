@@ -40,6 +40,35 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Event'
+  /event/year/{year}:
+    get:
+      tags:
+        - 🗓️ Event
+      summary: Read all calendar events for a specific year for a specific account
+      operationId: readAllEventsForYear
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account      
+        - in: path
+          name: year
+          schema:
+            type: integer
+            description: Full (four-digit) year    
+          required: true                          
+      responses:
+        '200':
+          description: An event object
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Event'                  
   /event/{eventId}:
     get:
       tags:

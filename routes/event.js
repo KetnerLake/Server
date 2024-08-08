@@ -23,6 +23,23 @@ router.get( '/', async ( req, res ) => {
   res.json( results.length > 0 ? results : null );
 } );
 
+// Read all records for given year for a given account
+router.get( '/year/:year', async ( req, res ) => {
+  const start = new Date( req.params.year, 0, 1 );
+  const end = new Date( req.params.year, 11, 31 );
+  const [results, fields] = await req.db.query(
+    'SELECT token AS id, createdAt, updatedAt, startsAt, endsAt, summary, location, url, description FROM Event WHERE accountId = ? AND startsAt >= ? AND endsAt <= ?',
+    [req.accountId, start, end]
+  );  
+
+  for( let e = 0; e < results.length; e++ ) {
+    results[e].startsAt = results[e].startsAt.toISOString().substring( 0, 10 );
+    results[e].endsAt = results[e].endsAt.toISOString().substring( 0, 10 );
+  }
+
+  res.json( results.length > 0 ? results : null );
+} );
+
 // Read single record for given ID
 router.get( '/:id', async ( req, res ) => {
   const [results, fields] = await req.db.query(
