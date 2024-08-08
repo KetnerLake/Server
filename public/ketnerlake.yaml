@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  version: "1.0"
+  title: 🌊 Ketner Lake
+  description: API server for Ketner Lake products
+  contact:
+    email: parkerkrhoyt@gmail.com
+  license:
+    name: MIT
+externalDocs:
+  description: Find out more about Ketner Lake
+  url: https://ketnerlake.com
+servers:
+  - url: http://localhost:3000/api/v1
+  - url: https://xmt62bgtjg.us-west-2.awsapprunner.com/api/v1
+tags:
+  - name: 🗓️ Event
+    description: Calendar events for the year view of Anno Awesome
+paths:
+  /event:
+    get:
+      tags:
+        - 🗓️ Event
+      summary: Read all calendar events for a specific account
+      operationId: readAllEvents
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account      
+      responses:
+        '200':
+          description: An event object
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Event'
+  /event/{eventId}:
+    get:
+      tags:
+        - 🗓️ Event
+      summary: Read specific calendar event for a specific account
+      operationId: readEvent
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account    
+        - in: path
+          name: eventId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific event    
+          required: true              
+      responses:
+        '200':
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'  
+    post:
+      tags:
+        - 🗓️ Event
+      summary: Create calendar event for a specific account
+      operationId: createEvent
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account   
+        - in: path
+          name: eventId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific event    
+          required: true                           
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: Echo of the created event object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'                                                                  
+    put:
+      tags:
+      - 🗓️ Event
+      summary: Update specific calendar event for a specific account
+      operationId: updateEvent
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account   
+        - in: path
+          name: eventId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific event    
+          required: true                               
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'                                                                  
+      responses:
+        200:
+          description: The calendar event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'                
+    delete:
+      tags:
+        - 🗓️ Event
+      summary: Delete a specific calendar event for a specific account
+      operationId: deleteEvent
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific account   
+        - in: path
+          name: eventId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific event    
+          required: true                           
+      responses:
+        '200':
+          description: Echo of the created event object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid                
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string              
+          format: date-time
+        startsAt:
+          type: string              
+          format: date
+        endsAt:
+          type: string              
+          format: date
+        summary:
+          type: string
+        location:
+          type: string                                  
+        url:
+          type: string
+          format: uri                    
+        description:
+          type: string                    
