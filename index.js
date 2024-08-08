@@ -71,7 +71,7 @@ app.use( async ( req, res, next ) => {
 app.use( '/', express.static( 'public' ) );
 
 // Routes
-app.use( '/api/v1/event', require( './routes/event' ) );
+app.use( '/v1/event', require( './routes/event' ) );
 
 // Start
 app.listen( 3000, () => {
