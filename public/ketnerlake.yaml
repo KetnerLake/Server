@@ -11,8 +11,8 @@ externalDocs:
   description: Find out more about Ketner Lake
   url: https://ketnerlake.com
 servers:
-  - url: http://localhost:3000/api/v1
-  - url: https://xmt62bgtjg.us-west-2.awsapprunner.com/api/v1
+  - url: http://localhost:3000/v1
+  - url: https://xmt62bgtjg.us-west-2.awsapprunner.com/v1
 tags:
   - name: 🗓️ Event
     description: Calendar events for the year view of Anno Awesome
