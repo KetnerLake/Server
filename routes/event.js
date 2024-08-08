@@ -5,7 +5,7 @@ let router = express.Router();
 
 // Test
 router.get( '/test', ( req, res ) => {    
-  res.json( {event: 'Test'} );
+  res.json( {id: 'Event', version: '2024-08-08'} );
 } );
 
 // Read all records for given account

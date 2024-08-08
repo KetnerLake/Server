@@ -194,6 +194,25 @@ paths:
                   id:
                     type: string
                     format: uuid
+  /event/test:
+    get:
+      tags:
+        - 🗓️ Event
+      summary: Testing if the service is operational
+      operationId: testEvent
+      responses:
+        '200':
+          description: Endpoint and version information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  version:
+                    type: string              
+                    format: date
 components:
   schemas:
     Event:
