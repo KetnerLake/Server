@@ -14,13 +14,250 @@ servers:
   - url: http://localhost:3000/v1
   - url: https://xmt62bgtjg.us-west-2.awsapprunner.com/v1
 tags:
-  - name: 🗓️ Event
-    description: Calendar events for the year view of Anno Awesome
+  - name: 📒 Account
+    description: Account on the API system
+  - name: 🗓️ Calendar
+    description: Calendar on the API system
+  - name: 🎟️ Event
+    description: Event on the API system
 paths:
+  /account/login:
+    post:
+      tags:
+        - 📒 Account
+      summary: Login to system account
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: The session ID for the account
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+  /account/register:
+    post:
+      tags:
+        - 📒 Account
+      summary: Register new account with system
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: The session ID for the account
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid   
+  /account/test:
+    get:
+      tags:
+        - 📒 Account
+      summary: Testing if the service is operational
+      operationId: testAccount
+      responses:
+        '200':
+          description: Endpoint and version information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  version:
+                    type: string              
+                    format: date    
+  /calendar:
+    get:
+      tags:
+        - 🗓️ Calendar
+      summary: Read all calendars for a specific account
+      operationId: readAllCalendars
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            description: Identifier for specific account      
+      responses:
+        '200':
+          description: An array of calendar objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Calendar' 
+  /calendar/{calendarId}:
+    get:
+      tags:
+        - 🗓️ Calendar
+      summary: Read a specific calendar for a specific account
+      operationId: readCalendar
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            description: Identifier for specific account    
+        - in: path
+          name: calendarId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific calendar    
+          required: true              
+      responses:
+        '200':
+          description: A single calendar object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'  
+    post:
+      tags:
+        - 🗓️ Calendar
+      summary: Create a calendar for a specific account
+      operationId: createCalendar
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            description: Identifier for specific account   
+        - in: path
+          name: calendarId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific calendar    
+          required: true                           
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Calendar'
+      responses:
+        '200':
+          description: The calendar object created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'                                                                  
+    put:
+      tags:
+      - 🗓️ Calendar
+      summary: Update a specific calendar for a specific account
+      operationId: updateCalendar
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            description: Identifier for specific account   
+        - in: path
+          name: calendarId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific calendar    
+          required: true                               
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Calendar'                                                                  
+      responses:
+        200:
+          description: The calendar object updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calendar'                
+    delete:
+      tags:
+        - 🗓️ Calendar
+      summary: Delete a specific calendar for a specific account
+      operationId: deleteCalendar
+      parameters:
+        - in: header
+          name: x-anno-awesome
+          required: true
+          schema:
+            type: string
+            description: Identifier for specific account   
+        - in: path
+          name: calendarId
+          schema:
+            type: string
+            format: uuid
+            description: Identifier for specific calendar    
+          required: true                           
+      responses:
+        '200':
+          description: The created calendar object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+  /calendar/test:
+    get:
+      tags:
+        - 🗓️ Calendar
+      summary: Testing if the service is operational
+      operationId: testCalendar
+      responses:
+        '200':
+          description: Endpoint and version information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  version:
+                    type: string              
+                    format: date                                             
   /event:
     get:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Read all calendar events for a specific account
       operationId: readAllEvents
       parameters:
@@ -29,7 +266,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account      
       responses:
         '200':
@@ -43,7 +279,7 @@ paths:
   /event/year/{year}:
     get:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Read all calendar events for a specific year for a specific account
       operationId: readAllEventsForYear
       parameters:
@@ -52,7 +288,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account      
         - in: path
           name: year
@@ -72,7 +307,7 @@ paths:
   /event/{eventId}:
     get:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Read specific calendar event for a specific account
       operationId: readEvent
       parameters:
@@ -81,7 +316,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account    
         - in: path
           name: eventId
@@ -99,7 +333,7 @@ paths:
                 $ref: '#/components/schemas/Event'  
     post:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Create calendar event for a specific account
       operationId: createEvent
       parameters:
@@ -108,7 +342,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account   
         - in: path
           name: eventId
@@ -132,7 +365,7 @@ paths:
                 $ref: '#/components/schemas/Event'                                                                  
     put:
       tags:
-      - 🗓️ Event
+      - 🎟️ Event
       summary: Update specific calendar event for a specific account
       operationId: updateEvent
       parameters:
@@ -141,7 +374,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account   
         - in: path
           name: eventId
@@ -165,7 +397,7 @@ paths:
                 $ref: '#/components/schemas/Event'                
     delete:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Delete a specific calendar event for a specific account
       operationId: deleteEvent
       parameters:
@@ -174,7 +406,6 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
             description: Identifier for specific account   
         - in: path
           name: eventId
@@ -197,7 +428,7 @@ paths:
   /event/test:
     get:
       tags:
-        - 🗓️ Event
+        - 🎟️ Event
       summary: Testing if the service is operational
       operationId: testEvent
       responses:
@@ -215,6 +446,53 @@ paths:
                     format: date
 components:
   schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid                
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string              
+          format: date-time
+        email:
+          type: string
+          format: email                
+        password:
+          type: string
+          format: password
+        role:
+          type: string                        
+        isVerified:
+          type: integer
+    Calendar:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid                
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string              
+          format: date-time
+        accountId:
+          type: string
+          format: uuid                
+        name:
+          type: string              
+        color:
+          type: string              
+        isShared:
+          type: integer
+        isPublic:
+          type: integer
+        isActive:
+          type: integer
     Event:
       type: object
       properties:
@@ -227,6 +505,9 @@ components:
         updatedAt:
           type: string              
           format: date-time
+        calendarId:
+          type: string
+          format: uuid                          
         startsAt:
           type: string              
           format: date
@@ -237,6 +518,10 @@ components:
           type: string
         location:
           type: string                                  
+        latitude:
+          type: number
+        longitude:
+          type: number
         url:
           type: string
           format: uri                    

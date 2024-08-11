@@ -42,27 +42,6 @@ app.use( async ( req, res, next ) => {
   req.config = config;
   req.db = db;
 
-  // Check header
-  // Authentication
-  if( req.headers['x-anno-awesome'] ) {
-    // Query for account
-    const [results, fields] = await req.db.query(
-      'SELECT id, token FROM Account WHERE token = ?',
-      [req.headers['x-anno-awesome']]
-    );
-
-    if( results.length === 0 ) {
-      // Not found
-      // Pass along nothing
-      req.accountId = null;
-    } else {
-      // Pass along the account record
-      req.accountId = results[0].id;
-    }
-  } else {
-    req.accountId = null;
-  }
-
   // Just keep swimming!
   next();
 } );
@@ -71,9 +50,13 @@ app.use( async ( req, res, next ) => {
 app.use( '/', express.static( 'public' ) );
 
 // Routes
+app.use( '/v1/account', require( './routes/account' ) );
+app.use( '/v1/calendar', require( './routes/calendar' ) );
 app.use( '/v1/event', require( './routes/event' ) );
 
+const port = process.env.PORT || config.server.port;
+
 // Start
-app.listen( 3000, () => {
+app.listen( port, () => {
   console.log( `Have an awesome year!` );
 } );
